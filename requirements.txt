@@ -3,4 +3,4 @@ requests
 pandas
 plotly
 numpy
-websocket-client
+Pillow
