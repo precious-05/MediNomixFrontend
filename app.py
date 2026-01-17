@@ -23,7 +23,8 @@ st.set_page_config(
 
 
 # Backend URL
-BACKEND_URL = "http://localhost:8000"
+# Use this exactly:
+BACKEND_URL = "https://medinomixbackend-production.up.railway.app"
 #WS_URL = "ws://localhost:8000/ws/dashboard"
 
 
