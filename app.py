@@ -4067,7 +4067,7 @@ def create_heatmap_chart():
     return fig
 
 def create_risk_breakdown_chart():
-    """Create EPIC risk breakdown donut chart with transparent black/purple background - ULTIMATE VISUAL VERSION"""
+    """Create risk breakdown chart with gradient theme colors and clean design"""
     if 'breakdown' not in st.session_state.dashboard_data:
         return None
     
@@ -4075,7 +4075,7 @@ def create_risk_breakdown_chart():
     if not breakdown:
         return None
     
-    # Sort by risk level for better visualization
+    # Sort by risk level
     risk_order = ['Critical', 'High', 'Medium', 'Low']
     breakdown_sorted = sorted(
         breakdown, 
@@ -4086,187 +4086,211 @@ def create_risk_breakdown_chart():
     categories = [item['category'].title() for item in breakdown_sorted]
     counts = [item['count'] for item in breakdown_sorted]
     
-    # EPIC COLOR SCHEME with opacity in colors directly
+    # Using your theme gradient colors
     colors = [
-        'rgba(255, 107, 107, 0.9)',  # Bright Red (Critical)
-        'rgba(255, 167, 38, 0.9)',   # Bright Orange (High)
-        'rgba(139, 92, 246, 0.9)',   # Vibrant Purple (Medium)
-        'rgba(102, 187, 106, 0.9)'   # Bright Green (Low)
+        '#EF4444',  # Red (Critical) - from gradient_danger
+        '#F59E0B',  # Orange (High) - from gradient_warning
+        '#8B5CF6',  # Purple (Medium) - primary color
+        "#DC18A8"   # Green (Low) - from gradient_success
     ]
     
-    # Icon mapping
-    icons = {
-        'Critical': '❗',
-        'High': '⚠️',
-        'Medium': '💊',
-        'Low': '✅'
-    }
-    
-    # Icon-enhanced labels
-    labels_with_icons = [f"{icons.get(cat, '')} {cat}" for cat in categories]
-    
-    # Create EPIC DONUT CHART
+    # Create donut chart with clean design
     fig = go.Figure(data=[go.Pie(
-        labels=labels_with_icons,
+        labels=categories,
         values=counts,
-        hole=0.6,  # Larger hole for modern look
+        hole=0.5,
         marker=dict(
             colors=colors,
-            line=dict(color='rgba(255, 255, 255, 0.8)', width=4)
+            line=dict(color='white', width=2)  # White border for clean look
         ),
-        textinfo='label+percent',
-        textposition='outside',
+        textinfo='percent',
+        textposition='inside',
         textfont=dict(
-            size=18,  # BIGGER TEXT
-            color='white',  # WHITE FOR CONTRAST
-            family="Inter",
-            weight=800  # Bold
+            size=18,  # Increased from 16
+            color='white',  # White text for better contrast
+            family="Arial, sans-serif",
+            weight=700
         ),
         hovertemplate=(
-            "<b>%{label}</b><br>" +
+            "<b style='color:#8B5CF6'>%{label}</b><br>" +
             "<b>Count: %{value}</b><br>" +
             "<b>Percentage: %{percent}</b><br>" +
             "<extra></extra>"
         ),
-        pull=[0.08, 0.06, 0.04, 0.02],  # Pull effect for emphasis
-        rotation=180,
+        pull=[0.02, 0.02, 0.02, 0.02],  # Very subtle pull effect
+        rotation=45,  # Better starting position
         direction='clockwise',
         sort=False,
         hoverinfo='label+value+percent',
-        texttemplate='<b>%{label}</b><br>%{percent}'
+        texttemplate='<b>%{percent:.1%}</b>'
     )])
     
-    # Add center text for modern donut chart
+    # Update traces for better text positioning
+    fig.update_traces(
+        textposition='inside',
+        textinfo='percent',
+        insidetextfont=dict(
+            size=16,  # Increased from 14
+            color='white',
+            family='Arial, sans-serif',
+            weight=700
+        ),
+        marker=dict(
+            line=dict(width=2, color='white'),
+        ),
+        rotation=45
+    )
+    
+    # Add center text
     total = sum(counts)
     fig.add_annotation(
         text=f"<b>TOTAL<br>{total}</b>",
         x=0.5,
         y=0.5,
         font=dict(
-            size=32,
-            color='purple',
-            family="Inter",
+            size=36,  # Increased from 28
+            color='#8B5CF6',  # Your primary purple
+            family="Arial, sans-serif",
             weight=900
         ),
         showarrow=False,
         align="center"
     )
     
-    # Add second center annotation for subtitle
+    # Add subtitle
     fig.add_annotation(
-        text=f"<b>RISK ANALYSIS</b>",
+        text=f"<b>RISK CATEGORIES</b>",
         x=0.5,
-        y=0.42,
+        y=0.38,
         font=dict(
-            size=16,
-            color='purple',
-            family="Inter",
+            size=18,  # Increased from 14
+            color='#7C3AED',  # Your primary_hover color
+            family="Arial, sans-serif",
             weight=600
         ),
         showarrow=False,
         align="center"
     )
     
-    # EPIC TRANSPARENT BLACK/PURPLE BACKGROUND LAYOUT
+    # Update layout with gradient theme
     fig.update_layout(
         title=dict(
-            text="RISK DISTRIBUTION ANALYSIS",
+            text="<b>RISK DISTRIBUTION ANALYSIS</b>",
             font=dict(
-                color='purple', 
-                size=28,
-                family="Inter",
+                color='#8B5CF6',  # Your primary color
+                size=26,  # Increased from 22
+                family="Arial, sans-serif",
                 weight=900
             ),
             x=0.5,
             xanchor="center",
-            y=0.98,
+            y=0.97,
             yanchor="top",
             pad=dict(t=10, b=40)
         ),
-        # TRANSPARENT DARK BACKGROUND (matching heatmap)
-        plot_bgcolor='rgba(178, 150, 200, 0.7)',
-        paper_bgcolor='rgba(210, 225, 215, 0.95)',
-
         
-        height=700,  # Taller for better visibility
+        # Clean transparent background
+        plot_bgcolor='rgba(255, 255, 255, 0)',
+        paper_bgcolor='rgba(255, 255, 255, 0)',
+        
+        # INCREASED DIMENSIONS
+        height=720,  # Increased from 500
+        width=610,   # Increased from 600
         showlegend=True,
+        
+        # Modern legend
         legend=dict(
-            font=dict(
-                size=14, 
-                color='purple', 
-                family="Inter",
-                weight=600
+            title=dict(
+                text="<b>Risk Levels</b>",
+                font=dict(
+                    size=14,  # Increased from 12
+                    color='#8B5CF6',
+                    family="Arial, sans-serif",
+                    weight=700
+                )
             ),
-            bgcolor='rgba(20, 20, 40, 0.6)',
-            bordercolor='rgba(255, 255, 255, 0.3)',
-            borderwidth=2,
-            orientation="h",
-            yanchor="bottom",
-            y=-0.25,
-            xanchor="center",
-            x=0.5,
+            font=dict(
+                size=13,  # Increased from 11
+                color='#6B7280',  # Your text_secondary color
+                family="Arial, sans-serif",
+                weight=500
+            ),
+            bgcolor='rgba(255, 255, 255, 0.9)',
+            bordercolor='#E5E7EB',
+            borderwidth=1,
+            orientation="v",  # Vertical legend for better fit
+            yanchor="middle",
+            y=0.5,
+            xanchor="left",
+            x=1.02,
             itemclick="toggleothers",
             itemdoubleclick="toggle"
         ),
-        margin=dict(l=20, r=20, t=120, b=120),
         
-        # Annotations for context
-        annotations=[
-            dict(
-                x=0.02,
-                y=1.05,
-                xref="paper",
-                yref="paper",
-                text="Larger slice = Higher occurrence",
-                showarrow=False,
-                font=dict(
-                    size=12,
-                    color='rgba(255, 255, 255, 0.7)',
-                    family="Inter"
-                ),
-                align="left"
-            ),
-            dict(
-                x=0.98,
-                y=1.05,
-                xref="paper",
-                yref="paper",
-                text="Critical risks highlighted",
-                showarrow=False,
-                font=dict(
-                    size=12,
-                    color='rgba(255, 255, 255, 0.7)',
-                    family="Inter"
-                ),
-                align="right"
-            )
-        ]
-    )
-    
-    # Configure hover label
-    fig.update_layout(
-        hoverlabel=dict(
-            bgcolor="rgba(20, 20, 40, 0.95)",
-            bordercolor="white",
-            font_size=14,
-            font_family="Inter",
-            font_color="white"
+        # Better margins
+        margin=dict(l=30, r=150, t=100, b=30),  # Increased margins
+        
+        # Uniform text info (prevents overlapping)
+        uniformtext=dict(
+            mode='hide',
+            minsize=14  # Increased from 12
         )
     )
     
-    # Update traces with correct properties (NO opacity in marker)
-    fig.update_traces(
-        textposition='outside',
-        textinfo='label+percent',
-        outsidetextfont=dict(
-            size=16,
+    # Add thin gradient border (slightly thicker for larger chart)
+    fig.add_shape(
+        type="rect",
+        xref="paper",
+        yref="paper",
+        x0=-0.02,
+        y0=-0.02,
+        x1=1.02,
+        y1=1.02,
+        line=dict(
+            color="#FDB5FA",
+            width=2.5,  # Slightly thicker
+        ),
+        fillcolor="rgba(0,0,0,0)",
+    )
+    
+    # Add inner gradient border
+    fig.add_shape(
+        type="rect",
+        xref="paper",
+        yref="paper",
+        x0=0,
+        y0=0,
+        x1=1,
+        y1=1,
+        line=dict(
             color='white',
-            family='Inter'
+            width=1.5,  # Slightly thicker
         ),
-        marker=dict(
-            line=dict(width=4, color='rgba(255, 255, 255, 0.9)')
-        ),
-        rotation=180
+        fillcolor="rgba(0,0,0,0)",
+    )
+    
+    # Add gradient background effect
+    fig.add_shape(
+        type="rect",
+        xref="paper",
+        yref="paper",
+        x0=0,
+        y0=0,
+        x1=1,
+        y1=1,
+        line=dict(width=0),
+        fillcolor="rgba(139, 92, 246, 0.03)",  # Very light purple tint
+    )
+    
+    # Configure hover label with theme colors
+    fig.update_layout(
+        hoverlabel=dict(
+            bgcolor="rgba(139, 92, 246, 0.95)",  # Your primary color with opacity
+            bordercolor="white",
+            font_size=14,  # Increased from 12
+            font_family="Arial, sans-serif",
+            font_color="white"
+        )
     )
     
     return fig
