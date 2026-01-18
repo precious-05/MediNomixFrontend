@@ -3833,7 +3833,7 @@ def load_dashboard_data():
 
 
 def create_heatmap_chart():
-    """Heatmap with transparent black/purple background - ULTIMATE VISUAL VERSION"""
+    """Professional Heatmap with High Contrast Colors and Perfect Text Visibility"""
     if 'heatmap' not in st.session_state.dashboard_data:
         return None
     
@@ -3844,116 +3844,140 @@ def create_heatmap_chart():
     if not drug_names or not risk_matrix:
         return None
     
-    # Create text matrix for annotations with better colors
+    # Create a copy to avoid modifying original data
+    import copy
+    display_matrix = copy.deepcopy(risk_matrix)
+    
+    # Create text matrix with PERFECT CONTRAST
     text_matrix = []
-    for row in risk_matrix:
+    for i, row in enumerate(display_matrix):
         text_row = []
-        for val in row:
-            if val > 70:
-                text_row.append(f'<b style="color:white; font-size:12px;">🔥 {val:.0f}%</b>')
-            elif val > 50:
-                text_row.append(f'<b style="color:white; font-size:12px;">⚠️ {val:.0f}%</b>')
-            elif val > 30:
-                text_row.append(f'<b style="color:#1F2937; font-size:12px;">{val:.0f}%</b>')
+        for j, val in enumerate(row):
+            # For diagonal cells (same drug comparison)
+            if i == j:
+                text_row.append('<b style="color:##FFFFFF;; font-size:14px; font-weight:900;">-</b>')
+                display_matrix[i][j] = 0  # Set to 0 for color scale
             else:
-                text_row.append(f'<b style="color:#374151; font-size:12px;">{val:.0f}%</b>')
+                # Dynamic text color based on value
+                if val > 75:
+                    # White text on dark background
+                    text_row.append(f'<b style="color:#FFFFFF; font-size:13px; font-weight:900; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">{val:.0f}%</b>')
+                elif val > 50:
+                    # Dark text on medium background
+                    text_row.append(f'<b style="color:##FFFFFF;; font-size:13px; font-weight:900;">{val:.0f}%</b>')
+                elif val > 25:
+                    # Dark purple text
+                    text_row.append(f'<b style="color:##FFFFFF;; font-size:13px; font-weight:900;">{val:.0f}%</b>')
+                else:
+                    # Purple text on light background
+                    text_row.append(f'<b style="color:##FFFFFF;; font-size:13px; font-weight:900;">{val:.0f}%</b>')
         text_matrix.append(text_row)
     
-    # IMPROVED COLORSCALE - More vibrant and visible
+    # PROFESSIONAL MEDICAL COLORSCALE - Green to Red
     colorscale = [
-    [0.0, '#E0E7FF'],   # Very Light Purple/Blue
-    [0.2, '#C7D2FE'],   # Light Purple/Blue  
-    [0.4, '#A5B4FC'],   # Medium Purple/Blue
-    [0.6, '#818CF8'],   # Blue/Purple
-    [0.8, '#8B5CF6'],   # Your main Purple
-    [1.0, '#EC4899']    # Your Pink
+        [0.0, "#EEDBF8"],    # Green (Low Risk: 0-20%)
+        [0.2, '#8BC34A'],    # Light Green (20-40%)
+        [0.4, '#CDDC39'],    # Lime (40-60%)
+        [0.6, '#FFEB3B'],    # Yellow (60-80%)
+        [0.8, '#FF9800'],    # Orange (80-90%)
+        [1.0, '#F44336']     # Red (90-100%)
     ]
     
     fig = go.Figure(data=go.Heatmap(
-        z=risk_matrix,
+        z=display_matrix,
         x=drug_names,
         y=drug_names,
         text=text_matrix,
         texttemplate="%{text}",
         textfont=dict(
-            family="Inter",
-            size=11,
-            color="white"
+            family="Arial, sans-serif",
+            size=12,
+            weight=900
         ),
         colorscale=colorscale,
         hoverinfo="x+y+z+text",
         hovertemplate=(
-            "<b style='font-size:14px; font-family:Inter;'>%{y} ↔ %{x}</b><br>" +
-            "<b style='font-size:16px; color:%{z}<70?%{z}<50?'#374151':'#F59E0B':'#EF4444'>Risk: %{z:.1f}%</b><br>" +
+            "<b style='font-size:14px; color:#6A0DAD; font-family:Arial,sans-serif;'>%{y} ↔ %{x}</b><br>" +
+            "<b style='font-size:16px; color:#F44336;'>Risk Score: %{z:.1f}%</b><br>" +
             "<extra></extra>"
         ),
         showscale=True,
+        # Add cell gaps for borders effect
+        xgap=2,
+        ygap=2,
         colorbar=dict(
             title=dict(
                 text="<b>RISK SCORE (%)</b>",
                 font=dict(
-                    size=14,
-                    color='white',
-                    family="Inter",
-                    weight=800
+                    size=15,
+                    color='#6A0DAD',
+                    family="Arial, sans-serif",
+                    weight=900
                 )
             ),
             tickfont=dict(
-                size=12,
-                color='white',
-                family="Inter",
-                weight=600
+                size=13,
+                color='#6A0DAD',
+                family="Arial, sans-serif",
+                weight=700
             ),
             thickness=20,
             len=0.8,
             x=1.02,
-            xpad=20
+            xpad=20,
+            tickvals=[0, 20, 40, 60, 80, 100],
+            ticktext=['0%', '20%', '40%', '60%', '80%', '100%'],
+            outlinecolor='#6A0DAD',
+            outlinewidth=1,
+            bgcolor='rgba(255, 255, 255, 0.9)',
+            borderwidth=1,
+            bordercolor='#6A0DAD'
         )
     ))
     
-    # TRANSPARENT BLACK/PURPLE BACKGROUND
+    # UPDATE LAYOUT
     fig.update_layout(
         title=dict(
-            text="🔥 DRUG CONFUSION RISK HEATMAP",
+            text="<b>DRUG CONFUSION RISK HEATMAP</b>",
             font=dict(
-                color='white', 
+                color='#6A0DAD',
                 size=28,
-                family="Inter",
+                family="Arial, sans-serif",
                 weight=900
             ),
             x=0.5,
             xanchor="center",
-            y=0.95,
+            y=0.97,
             yanchor="top",
             pad=dict(t=10, b=40)
         ),
-        # TRANSPARENT DARK BACKGROUND
-        plot_bgcolor='rgba(20, 20, 40, 0.7)',
-        paper_bgcolor='rgba(30, 10, 50, 0.8)',
+        
+        # Clean white-based background
+        plot_bgcolor='rgba(255, 255, 255, 0.9)',
+        paper_bgcolor='rgba(255, 255, 255, 0.1)',
         
         xaxis=dict(
             title=dict(
                 text="<b>DRUG NAMES</b>",
                 font=dict(
                     size=16,
-                    color='white',
-                    family="Inter",
-                    weight=800
+                    color='#6A0DAD',
+                    family="Arial, sans-serif",
+                    weight=900
                 )
             ),
             tickfont=dict(
-                size=12,
-                color='white',
-                family="Inter",
+                size=13,
+                color='#6A0DAD',
+                family="Arial, sans-serif",
                 weight=700
             ),
             tickangle=-45,
             showgrid=False,
             automargin=True,
-            linecolor='rgba(255, 255, 255, 0.3)',
-            linewidth=2,
-            mirror=True,
-            gridcolor='rgba(255, 255, 255, 0.1)',
+            linecolor='#6A0DAD',
+            linewidth=1,
+            gridcolor='rgba(106, 13, 173, 0.1)',
             side='bottom'
         ),
         
@@ -3962,100 +3986,82 @@ def create_heatmap_chart():
                 text="<b>DRUG NAMES</b>",
                 font=dict(
                     size=16,
-                    color='white',
-                    family="Inter",
-                    weight=800
+                    color='#6A0DAD',
+                    family="Arial, sans-serif",
+                    weight=900
                 )
             ),
             tickfont=dict(
-                size=12,
-                color='white',
-                family="Inter",
+                size=13,
+                color='#6A0DAD',
+                family="Arial, sans-serif",
                 weight=700
             ),
             showgrid=False,
             automargin=True,
-            linecolor='rgba(255, 255, 255, 0.3)',
-            linewidth=2,
-            mirror=True,
-            gridcolor='rgba(255, 255, 255, 0.1)'
+            linecolor='#6A0DAD',
+            linewidth=1,
+            gridcolor='rgba(106, 13, 173, 0.1)',
+            autorange='reversed'
         ),
         
-        # Increased size for better visibility
-        width=1000,
-        height=800,
-        margin=dict(l=100, r=150, t=120, b=150),
-        hovermode='closest',
-        
-        # Add annotations for context
-        annotations=[
-            dict(
-                x=0.02,
-                y=1.05,
-                xref="paper",
-                yref="paper",
-                text="Darker colors = Higher confusion risk",
-                showarrow=False,
-                font=dict(
-                    size=12,
-                    color='rgba(255, 255, 255, 0.7)',
-                    family="Inter"
-                ),
-                align="left"
-            ),
-            dict(
-                x=0.98,
-                y=1.05,
-                xref="paper",
-                yref="paper",
-                text="Diagonal = Same drug comparison",
-                showarrow=False,
-                font=dict(
-                    size=12,
-                    color='rgba(255, 255, 255, 0.7)',
-                    family="Inter"
-                ),
-                align="right"
-            )
-        ]
+        # Optimized dimensions
+        width=900,
+        height=700,
+        margin=dict(l=100, r=150, t=120, b=120),
+        hovermode='closest'
     )
     
-    # Add grid lines for better cell visibility
-    fig.update_xaxes(
-        showline=True,
-        linewidth=1,
-        linecolor='rgba(255, 255, 255, 0.2)',
-        gridwidth=1,
-        gridcolor='rgba(255, 255, 255, 0.1)'
+    # ADD INFORMATIVE ANNOTATIONS (Footer removed as requested)
+    fig.add_annotation(
+        x=0.02,
+        y=1.05,
+        xref="paper",
+        yref="paper",
+        text="<b>BLUE = Low Risk | RED = High Risk</b>",
+        showarrow=False,
+        font=dict(
+            size=13,
+            color="#65BEC6",
+            family="Arial, sans-serif",
+            weight=700
+        ),
+        align="left",
+        bgcolor="rgba(255, 255, 255, 0.9)",
+        bordercolor="#5535AA",
+        borderwidth=1,
+        borderpad=6
     )
     
-    fig.update_yaxes(
-        showline=True,
-        linewidth=1,
-        linecolor='rgba(255, 255, 255, 0.2)',
-        gridwidth=1,
-        gridcolor='rgba(255, 255, 255, 0.1)'
+    fig.add_annotation(
+        x=0.98,
+        y=1.05,
+        xref="paper",
+        yref="paper",
+        text="<b>Diagonal: Same Drug (No Risk)</b>",
+        showarrow=False,
+        font=dict(
+            size=13,
+            color='#F44336',
+            family="Arial, sans-serif",
+            weight=700
+        ),
+        align="right",
+        bgcolor="rgba(255, 255, 255, 0.9)",
+        bordercolor="#F44336",
+        borderwidth=1,
+        borderpad=6
     )
     
-    # Configure hover label
+    # CONFIGURE HOVER LABEL
     fig.update_layout(
         hoverlabel=dict(
-            bgcolor="rgba(20, 20, 40, 0.95)",
+            bgcolor="rgba(106, 13, 173, 0.95)",
             bordercolor="white",
             font_size=14,
-            font_family="Inter",
+            font_family="Arial, sans-serif",
             font_color="white"
         )
-    )
-    
-    # Add subtle border to cells
-    fig.update_traces(
-        xgap=1,  # Gap between x cells
-        ygap=1,  # Gap between y cells
-        showscale=True,
-        colorbar_tickformat='.0f',
-        colorbar_tickvals=[0, 25, 50, 75, 100],
-        colorbar_ticktext=['0%', '25%', '50%', '75%', '100%']
     )
     
     return fig
@@ -4266,7 +4272,7 @@ def create_risk_breakdown_chart():
     return fig
 
 def create_top_risks_chart():
-    """Create top risks chart with vertical bars - ULTIMATE VISUAL VERSION"""
+    """Create top risks chart with modern pastel design - UPDATED VERSION"""
     if 'top_risks' not in st.session_state.dashboard_data:
         return None
     
@@ -4280,23 +4286,20 @@ def create_top_risks_chart():
     pairs = [f"{item['drug1']} ↔ {item['drug2']}" for item in top_risks]
     scores = [item['risk_score'] for item in top_risks]
     
-    # Create colors based on risk score - BRIGHTER VERSION
-    colors = []
-    for score in scores:
-        if score >= 75:
-            colors.append('#FF6B6B')  # Bright Red (Critical)
-        elif score >= 50:
-            colors.append('#FFA726')  # Bright Orange (High)
-        elif score >= 25:
-            colors.append("#BC47A7")  # Bright Purple (Medium)
-        else:
-            colors.append('#66BB6A')  # Bright Green (Low)
+    # Modern pastel color palette - each bar different color
+    pastel_colors = [
+        "#F9939D", "#FFD19D", "#FFFF87", "#93FFAB", "#88CCFF",  # Soft red, orange, yellow, green, blue
+        "#C383FF", "#FF9DE5", "#93E2BC", "#F9BB79", "#AAE8FF",  # Soft purple, pink, mint, peach, sky blue
+    ]
+    
+    # If more than 10 items, cycle through colors
+    colors = [pastel_colors[i % len(pastel_colors)] for i in range(len(pairs))]
     
     # Calculate maximum score for dynamic scaling
     max_score = max(scores) if scores else 100
-    y_axis_max = max_score * 1.2  # Add 20% padding at the top
+    y_axis_max = max_score * 1.15  # Add 15% padding
     
-    # Create figure with glassmorphism effect
+    # Create figure with modern design
     fig = go.Figure(data=[
         go.Bar(
             x=pairs,
@@ -4305,197 +4308,204 @@ def create_top_risks_chart():
             text=[f"{score:.0f}%" for score in scores],
             textposition='outside',
             textfont=dict(
-                size=20,  # BIGGER TEXT
-                color='white',  # WHITE FOR CONTRAST
-                family="Inter",
-                weight=900  # Black weight
+                size=16,
+                color='#6A0DAD',  # Purple color for text
+                family="Arial, sans-serif",
+                weight=700
             ),
             hovertemplate=(
-                "<b>%{x}</b><br>" +
+                "<b style='color:#6A0DAD'>%{x}</b><br>" +
                 "<b>Risk Score: %{y:.1f}%</b><br>" +
                 "<extra></extra>"
             ),
-            width=0.6,  # WIDER BARS
+            width=0.7,  # Slightly wider bars
             marker=dict(
-                line=dict(width=3, color='rgba(255, 255, 255, 0.8)'),
-                opacity=0.9
+                line=dict(width=2, color='rgba(255, 255, 255, 0.9)'),
+                opacity=0.85
             )
         )
     ])
     
-    # TRANSPARENT BLACK/PURPLE BACKGROUND
+    # Update layout with modern design
     fig.update_layout(
         title=dict(
             text="TOP 10 HIGH-RISK DRUG PAIRS",
             font=dict(
-                color='white', 
-                size=28,
-                family="Inter",
+                color='#6A0DAD',  # Purple title
+                size=24,
+                family="Arial, sans-serif",
                 weight=900
             ),
             x=0.5,
             xanchor="center",
-            y=0.95,
+            y=0.99,
             yanchor="top",
             pad=dict(t=10, b=40)
         ),
-        # TRANSPARENT DARK BACKGROUND
-        plot_bgcolor='rgba(148, 120, 180, 0.7)',
-        paper_bgcolor='rgba(104, 84, 126, 0.7)',
+        
+        # Transparent background for the plot
+        plot_bgcolor='rgba(255, 255, 255, 0.05)',
+        paper_bgcolor='rgba(255, 255, 255, 0)',  # Fully transparent paper
         
         xaxis=dict(
             title=dict(
                 text="DRUG PAIRS",
                 font=dict(
-                    size=18,
-                    color='white',
-                    family="Inter",
+                    size=16,
+                    color='#6A0DAD',  # Purple
+                    family="Arial, sans-serif",
                     weight=800
                 )
             ),
             tickfont=dict(
-                size=16,
-                color='white',
-                family="Inter",
-                weight=700
+                size=14,
+                color='#6A0DAD',  # Purple
+                family="Arial, sans-serif",
+                weight=600
             ),
-            tickangle=90,  # 45 degree angle for better readability
+            tickangle=-45,  # 45 degree angle for better readability
             showgrid=False,
             automargin=True,
-            linecolor='rgba(255, 255, 255, 0.3)',
-            linewidth=2,
-            mirror=True,
-            gridcolor='rgba(255, 255, 255, 0.1)'
+            linecolor='rgba(106, 13, 173, 0.3)',  # Purple
+            linewidth=1,
+            mirror=False,
+            gridcolor='rgba(106, 13, 173, 0.1)'
         ),
         
         yaxis=dict(
             title=dict(
                 text="RISK SCORE (%)",
                 font=dict(
-                    size=18,
-                    color='white',
-                    family="Inter",
+                    size=16,
+                    color='#6A0DAD',  # Purple
+                    family="Arial, sans-serif",
                     weight=800
                 )
             ),
             tickfont=dict(
-                size=16,
-                color='white',
-                family="Inter",
-                weight=700
+                size=14,
+                color='#6A0DAD',  # Purple
+                family="Arial, sans-serif",
+                weight=600
             ),
             range=[0, y_axis_max],
             showgrid=True,
-            gridcolor='rgba(255, 255, 255, 0.15)',
+            gridcolor='rgba(106, 13, 173, 0.15)',  # Light purple grid
             gridwidth=1,
             zeroline=True,
-            zerolinecolor='rgba(255, 255, 255, 0.3)',
-            zerolinewidth=2,
-            linecolor='rgba(255, 255, 255, 0.3)',
-            linewidth=2,
-            mirror=True
+            zerolinecolor='rgba(106, 13, 173, 0.3)',  # Purple
+            zerolinewidth=1,
+            linecolor='rgba(106, 13, 173, 0.3)',  # Purple
+            linewidth=1,
+            mirror=False
         ),
         
-        height=1200,  # Optimized height
-        margin=dict(l=80, r=50, t=120, b=180),  # Adjusted margins
+        # Optimized dimensions
+        height=1000,  # Reduced height
+        width=900,   # Added width for better proportions
+        
+        margin=dict(l=80, r=80, t=100, b=150),  # Better margins
+        
         hovermode='closest',
-        bargap=0.3  # Gap between bars
+        bargap=0.4,  # Gap between bars
+        
+        # Add border with purple color
+        shapes=[
+            dict(
+                type="rect",
+                xref="paper",
+                yref="paper",
+                x0=0,
+                y0=0,
+                x1=1,
+                y1=1,
+                line=dict(
+                    color="rgba(106, 13, 173, 0.2)",
+                    width=2,
+                ),
+                fillcolor="rgba(0,0,0,0)",
+            )
+        ]
     )
     
-    # Add horizontal threshold lines - SIMPLIFIED VERSION
-    # Critical line (75%)
-    fig.add_hline(
-        y=75,
-        line_dash="solid",
-        line_color="#FF6B6B",
-        line_width=2,
-        opacity=0.7
-    )
+    # Add horizontal threshold lines with annotations
+    thresholds = [
+        (75, "#FF6B6B", "CRITICAL"),
+        (50, "#FFA726", "HIGH"),
+        (25, "#4A90E2", "MEDIUM")
+    ]
     
-    # High line (50%)
-    fig.add_hline(
-        y=50,
-        line_dash="solid",
-        line_color="#FFA726",
-        line_width=2,
-        opacity=0.7
-    )
+    for y_value, color, label in thresholds:
+        if y_value <= y_axis_max:
+            fig.add_hline(
+                y=y_value,
+                line_dash="dash",
+                line_color=color,
+                line_width=1.5,
+                opacity=0.6
+            )
+            
+            # Add annotation
+            fig.add_annotation(
+                x=1.02,
+                xref="paper",
+                y=y_value,
+                yref="y",
+                text=f"<b>{label}</b>",
+                showarrow=False,
+                font=dict(
+                    size=12,
+                    color=color,
+                    family="Arial, sans-serif",
+                    weight=700
+                ),
+                bgcolor="rgba(255, 255, 255, 0.7)",
+                bordercolor=color,
+                borderwidth=1,
+                borderpad=4,
+                xanchor="left"
+            )
     
-    # Add annotations for threshold lines separately
-    fig.add_annotation(
-        x=1.02,  # Slightly outside the plot area
-        xref="paper",
-        y=75,
-        yref="y",
-        text="<b>CRITICAL</b>",
-        showarrow=False,
-        font=dict(
-            size=14,
-            color="#FF6B6B",
-            family="Inter",
-            weight=900
-        ),
-        bgcolor="rgba(255, 107, 107, 0.2)",
-        bordercolor="#FF6B6B",
-        borderwidth=1,
-        borderpad=4,
-        xanchor="left"
-    )
-    
-    fig.add_annotation(
-        x=1.02,  # Slightly outside the plot area
-        xref="paper",
-        y=50,
-        yref="y",
-        text="<b>HIGH</b>",
-        showarrow=False,
-        font=dict(
-            size=14,
-            color="#FFA726",
-            family="Inter",
-            weight=900
-        ),
-        bgcolor="rgba(255, 167, 38, 0.2)",
-        bordercolor="#FFA726",
-        borderwidth=1,
-        borderpad=4,
-        xanchor="left"
-    )
-    
-    # Add annotation for context
+    # Add subtitle with purple color
     fig.add_annotation(
         x=0.5,
-        y=1.1,
+        y=1.05,
         xref="paper",
         yref="paper",
-        text="Higher score = Greater confusion risk",
+        text="Higher scores indicate greater confusion risk",
         showarrow=False,
         font=dict(
-            size=12,
-            color='rgba(255, 255, 255, 0.7)',
-            family="Inter"
+            size=14,
+            color="#6C0DC4",  # Lighter purple
+            family="Arial, sans-serif",
+            weight=500
         ),
         xanchor="center",
-        yanchor="bottom"
+        yanchor="top"
     )
+   
     
-    # Add glow effect to bars
-    fig.update_traces(
-        marker=dict(
-            line=dict(width=3, color='rgba(255, 255, 255, 0.9)'),
-            opacity=0.95
-        )
-    )
-    
-    # Configure hover label
+    # Configure hover label with purple theme
     fig.update_layout(
         hoverlabel=dict(
-            bgcolor="rgba(20, 20, 40, 0.95)",
+            bgcolor="rgba(106, 13, 173, 0.9)",  # Purple background
             bordercolor="white",
-            font_size=14,
-            font_family="Inter",
+            font_size=13,
+            font_family="Arial, sans-serif",
             font_color="white"
         )
+    )
+    
+    # Add rounded corners effect
+    fig.update_traces(
+        marker=dict(
+            line=dict(width=2, color='rgba(255, 255, 255, 0.9)'),
+            opacity=0.85,
+            # Adding gradient for modern look
+            colorscale=[[0, 'rgba(255,255,255,0.3)'], [1, 'rgba(255,255,255,0)']],
+            showscale=False
+        ),
+        textposition='outside'
     )
     
     return fig
